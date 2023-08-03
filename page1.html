@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Basic Payment System</title>
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- Custom CSS -->
+  <style>
+    body {
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    .total-amount {
+      font-size: 48px;
+      font-weight: bold;
+      color: #007bff;
+    }
+
+    /* Additional style for formatting currency */
+    .currency {
+      font-size: 20px;
+      font-weight: bold;
+      color: #007bff;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <!-- Page 1: Total Amount Received -->
+    <div id="page1">
+      <h1>Total Amount Received</h1>
+      <p class="total-amount"><span class="currency">$</span><span id="totalAmount">Loading...</span></p>
+      <div id="transactionHistory">
+        <h3>Transaction History</h3>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Amount</th>
+            </tr>
+          </thead>
+          <tbody id="transactions"></tbody>
+        </table>
+      </div>
+      <button class="btn btn-primary" onclick="showPage2()">Make a Payment</button>
+    </div>
+
+    <!-- Page 2: Payment Form -->
+    <div id="page2" style="display: none;">
+      <h1>Make a Payment</h1>
+      <form onsubmit="return processPayment()">
+        <label for="paymentAmount">Amount to Pay:</label>
+        <div class="input-group mb-3">
+          <div class="input-group-prepend">
+            <span class="input-group-text">$</span>
+          </div>
+          <input type="number" id="paymentAmount" step="0.01" min="0" required class="form-control">
+        </div>
+        <div class="btn-group">
+          <button type="button" class="btn btn-secondary" onclick="setPaymentAmount(100)">100</button>
+          <button type="button" class="btn btn-secondary" onclick="setPaymentAmount(200)">200</button>
+          <button type="button" class="btn btn-secondary" onclick="setPaymentAmount(500)">500</button>
+        </div>
+        <br>
+        <label for="fullName">Full Name:</label>
+        <input type="text" id="fullName" required class="form-control">
+        <br>
+        <button type="submit" class="btn btn-success">Pay</button>
+        <button class="btn btn-secondary" onclick="showPage1()">Back to Total Amount</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script>
+    // Sample total amount and transaction history (you can replace this with real data)
+    let totalAmountReceived = 1000;
+    let transactionHistory = [];
+
+    // Function to show the total amount received and transaction history on page load
+    function showTotalAmount() {
+      const totalAmountElement = document.getElementById('totalAmount');
+      totalAmountElement.textContent = totalAmountReceived.toFixed(2);
+      showTransactionHistory();
+    }
+
+    // Function to show the transaction history
+    function showTransactionHistory() {
+      const transactionsElement = document.getElementById('transactions');
+      transactionsElement.innerHTML = '';
+
+      for (const transaction of transactionHistory) {
+        const tableRow = document.createElement('tr');
+        const nameCell = document.createElement('td');
+        const amountCell = document.createElement('td');
+
+        nameCell.textContent = transaction.fullName;
+        amountCell.textContent = `$${transaction.amount.toFixed(2)}`;
+
+        tableRow.appendChild(nameCell);
+        tableRow.appendChild(amountCell);
+        transactionsElement.appendChild(tableRow);
+      }
+    }
+
+    // Function to switch to Page 2 (Payment Form)
+    function showPage2() {
+      document.getElementById('page1').style.display = 'none';
+      document.getElementById('page2').style.display = 'block';
+    }
+
+    // Function to switch back to Page 1 (Total Amount)
+    function showPage1() {
+      document.getElementById('page1').style.display = 'block';
+      document.getElementById('page2').style.display = 'none';
+    }
+
+    // Function to set payment amount when clicking on predefined buttons
+    function setPaymentAmount(amount) {
+      document.getElementById('paymentAmount').value = amount;
+    }
+
+    // Function to process payment
+    function processPayment() {
+      const paymentAmount = parseFloat(document.getElementById('paymentAmount').value);
+      const fullName = document.getElementById('fullName').value;
+
+      if (isNaN(paymentAmount) || paymentAmount <= 0) {
+        alert('Please enter a valid amount to pay.');
+        return false;
+      }
+
+      // You can add your payment processing logic here
+      // For demonstration purposes, we'll just simulate a successful payment
+      alert(`Payment of $${paymentAmount.toFixed(2)} successful!`);
+
+      totalAmountReceived += paymentAmount;
+      transactionHistory.push({
+        fullName: fullName,
+        amount: paymentAmount,
+        timestamp: new Date()
+      });
+
+      showTotalAmount();
+      showPage1();
+      return false;
+    }
+
+    // Show the total amount received and transaction history on page load
+    showTotalAmount();
+  </script>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>
